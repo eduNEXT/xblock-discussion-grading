@@ -177,6 +177,6 @@ setup(
             'discussion_grading = discussion_grading:XBlockDiscussionGrading',
         ]
     },
-    package_data=package_data("discussion_grading", ["static", "public"]),
+    package_data=package_data("discussion_grading", ["static", "public", "translations"]),
 
 )

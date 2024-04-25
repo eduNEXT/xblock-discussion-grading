@@ -1,5 +1,5 @@
 Discussion Grading XBlock for Open edX
-#############################
+######################################
 
 Testing with Docker
 ********************
