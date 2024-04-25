@@ -18,4 +18,8 @@ class TestXBlockDiscussionGrading(TestCase):
         frag = block.student_view()
         as_dict = frag.to_dict()
         content = as_dict['content']
-        self.assertIn('XBlockDiscussionGrading: count is now', content, 'XBlock did not render correct student view')
+        self.assertIn(
+            '<div class="discussion_grading_block"></div>',
+            content,
+            'XBlock did not render correct student view'
+        )
