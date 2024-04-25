@@ -70,3 +70,10 @@ class XBlockDiscussionGrading(XBlock):
                     loader.module_name, text_js.format(locale_code=code)):
                 return text_js.format(locale_code=code)
         return None
+
+    @staticmethod
+    def get_dummy():
+        """
+        Generate initial i18n with dummy method.
+        """
+        return translation.gettext_noop("Dummy")

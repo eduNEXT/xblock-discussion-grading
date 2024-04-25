@@ -8,7 +8,7 @@
 
 REPO_NAME := xblock-discussion-grading
 PACKAGE_NAME := discussion_grading
-EXTRACT_DIR := $(PACKAGE_NAME)/conf/locale/en/LC_MESSAGES
+EXTRACT_DIR := $(PACKAGE_NAME)/locale/en/LC_MESSAGES
 EXTRACTED_DJANGO := $(EXTRACT_DIR)/django-partial.po
 EXTRACTED_DJANGOJS := $(EXTRACT_DIR)/djangojs-partial.po
 EXTRACTED_TEXT := $(EXTRACT_DIR)/text.po
