@@ -6,13 +6,30 @@ import pkg_resources
 from django.utils import translation
 from web_fragments.fragment import Fragment
 from xblock.core import XBlock
+from xblock.fields import Scope, String
 from xblock.utils.resources import ResourceLoader
+from xblock.utils.studio_editable import StudioEditableXBlockMixin
+
+from discussion_grading.utils import _
 
 
-class XBlockDiscussionGrading(XBlock):
+class XBlockDiscussionGrading(StudioEditableXBlockMixin, XBlock):
     """
     DiscussionGrading XBlock provides a way to grade discussions in Open edX.
     """
+
+    CATEGORY = "discussion_grading"
+
+    display_name = String(
+        display_name=_("Display Name"),
+        help=_("The display name for this component."),
+        scope=Scope.settings,
+        default=_("Discussion Grading"),
+    )
+
+    editable_fields = [
+        "display_name",
+    ]
 
     def resource_string(self, path: str) -> str:
         """
