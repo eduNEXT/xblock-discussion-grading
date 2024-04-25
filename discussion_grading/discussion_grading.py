@@ -6,10 +6,11 @@ import pkg_resources
 from django.utils import translation
 from web_fragments.fragment import Fragment
 from xblock.core import XBlock
-from xblock.fields import Scope, String
+from xblock.fields import Boolean, Integer, Scope, String
 from xblock.utils.resources import ResourceLoader
 from xblock.utils.studio_editable import StudioEditableXBlockMixin
 
+from discussion_grading.constants import GradingMethod
 from discussion_grading.utils import _
 
 
@@ -20,6 +21,9 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, XBlock):
 
     CATEGORY = "discussion_grading"
 
+    has_score = True
+    icon_class = "problem"
+
     display_name = String(
         display_name=_("Display Name"),
         help=_("The display name for this component."),
@@ -27,8 +31,45 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, XBlock):
         default=_("Discussion Grading"),
     )
 
+    grading_method = String(
+        display_name=_("Grading Method"),
+        help=_("Discussion grading method"),
+        values=[
+            {"display_name": grading_method.value, "value": grading_method.name}
+            for grading_method in GradingMethod
+        ],
+        scope=Scope.settings,
+    )
+
+    number_of_interventions = Integer(
+        display_name=_("Number of Interventions"),
+        help=_("Number of interventions"),
+        scope=Scope.settings,
+        default=1,
+    )
+
+    weight = Integer(
+        display_name=_("Problem Weight"),
+        help=_(
+            "Defines the number of points this problem is worth. If "
+            "the value is not set, the problem is worth one point."
+        ),
+        default=10,
+        scope=Scope.settings,
+    )
+
+    graded = Boolean(
+        display_name=_("Graded"),
+        help=_("Whether the student has been graded"),
+        default=False,
+        scope=Scope.user_state,
+    )
+
     editable_fields = [
         "display_name",
+        "grading_method",
+        "number_of_interventions",
+        "weight",
     ]
 
     def resource_string(self, path: str) -> str:
