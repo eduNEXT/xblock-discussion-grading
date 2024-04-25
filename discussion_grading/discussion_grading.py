@@ -1,10 +1,12 @@
 """DiscussionGrading XBlock."""
 
+from __future__ import annotations
+
 import pkg_resources
 from django.utils import translation
 from web_fragments.fragment import Fragment
 from xblock.core import XBlock
-from xblockutils.resources import ResourceLoader
+from xblock.utils.resources import ResourceLoader
 
 
 class XBlockDiscussionGrading(XBlock):
@@ -12,14 +14,28 @@ class XBlockDiscussionGrading(XBlock):
     DiscussionGrading XBlock provides a way to grade discussions in Open edX.
     """
 
-    def resource_string(self, path):
-        """Handy helper for getting resources from our kit."""
+    def resource_string(self, path: str) -> str:
+        """
+        Handy helper for getting resources from our kit.
+
+        Args:
+            path (str): A path to the resource.
+
+        Returns:
+            str: The resource as a string.
+        """
         data = pkg_resources.resource_string(__name__, path)
         return data.decode("utf8")
 
-    def student_view(self, context=None):
+    def student_view(self, context: dict = None) -> Fragment:
         """
         Create primary view of the XBlockDiscussionGrading, shown to students when viewing courses.
+
+        Args:
+            context (dict, optional): A dict containing data to be used in the view. Defaults to None.
+
+        Returns:
+            Fragment: The fragment to be displayed.
         """
         if context:
             pass  # TO-DO: do something based on the context.
@@ -59,7 +75,7 @@ class XBlockDiscussionGrading(XBlock):
         ]
 
     @staticmethod
-    def _get_statici18n_js_url():
+    def _get_statici18n_js_url() -> str | None:
         """
         Return the Javascript translation file for the currently selected language, if any.
 
@@ -79,7 +95,7 @@ class XBlockDiscussionGrading(XBlock):
         return None
 
     @staticmethod
-    def get_dummy():
+    def get_dummy() -> str:
         """
         Generate initial i18n with dummy method.
         """
