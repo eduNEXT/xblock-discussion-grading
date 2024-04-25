@@ -43,6 +43,12 @@ STATIC_URL = '/static/'
 
 LOCALE_PATHS = [os.path.join(BASE_DIR, 'discussion_grading', 'conf', 'locale')]
 
+LANGUAGES = [
+    ("en", "English - Source Language"),
+    ("es_419", "Spanish (Latin America)"),
+    ("es_ES", "Spanish (Spain)"),
+]
+
 STATICI18N_DOMAIN = 'text'
 STATICI18N_NAMESPACE = 'DiscussionGradingI18n'
 STATICI18N_PACKAGES = (
