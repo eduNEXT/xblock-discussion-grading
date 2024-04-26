@@ -20,9 +20,7 @@ from discussion_grading.enums import GradingMethod
 from discussion_grading.utils import _, get_anonymous_user_id, get_username
 
 try:
-    from openedx.core.djangoapps.django_comment_common.comment_client.course import (
-        get_course_user_stats,
-    )
+    from openedx.core.djangoapps.django_comment_common.comment_client.course import get_course_user_stats
 except ImportError:
     get_course_user_stats = None
 
@@ -32,7 +30,9 @@ loader = ResourceLoader(__name__)
 
 @XBlock.needs("i18n")
 @XBlock.needs("user")
-class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin, XBlock):
+class XBlockDiscussionGrading(
+    StudioEditableXBlockMixin, CompletableXBlockMixin, XBlock
+):
     """
     DiscussionGrading XBlock provides a way to grade discussions in Open edX.
     """
@@ -57,6 +57,7 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin,
             for grading_method in GradingMethod
         ],
         scope=Scope.settings,
+        default=GradingMethod.MINIMUM_INTERVENTIONS.name,
     )
 
     number_of_interventions = Integer(
@@ -129,7 +130,9 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin,
         data = pkg_resources.resource_string(__name__, path)
         return data.decode("utf8")
 
-    def render_template(self, template_path: str, context: Optional[dict] = None) -> str:
+    def render_template(
+        self, template_path: str, context: Optional[dict] = None
+    ) -> str:
         """
         Render a template with the given context.
 
@@ -182,47 +185,44 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin,
 
         # Add i18n js
         if statici18n_js_url := self._get_statici18n_js_url():
-            frag.add_javascript_url(self.runtime.local_resource_url(self, statici18n_js_url))
+            frag.add_javascript_url(
+                self.runtime.local_resource_url(self, statici18n_js_url)
+            )
 
         context = {
             "block": self,
             "weighted_score": self.get_weighted_score(),
         }
 
-        frag.add_content(self.render_template("static/html/discussion_grading.html", context))
+        frag.add_content(
+            self.render_template("static/html/discussion_grading.html", context)
+        )
         frag.add_css(self.resource_string("static/css/discussion_grading.css"))
         frag.add_javascript(self.resource_string("static/js/src/discussion_grading.js"))
         frag.initialize_js("XBlockDiscussionGrading")
         return frag
 
-    def get_weighted_score(self, student_id=None) -> int | None:
+    def get_weighted_score(self) -> int:
         """
-        Return weighted score from submissions.
-
-        Args:
-            student_id (_type_, optional): _description_. Defaults to None.
+        Return weighted score for the current user.
 
         Returns:
             int | None: The weighted score.
         """
-        score = get_score(self.get_student_item_dict(student_id))
+        score = get_score(self.get_student_item_dict())
         return score.get("points_earned") if score else 0
 
-    def get_student_item_dict(self, student_id=None) -> dict:
+    def get_student_item_dict(self) -> dict:
         """
-        Returns dict required by the submissions app for creating and
-        retrieving submissions for a particular student.
+        Return dict required by the submissions app.
 
-        Args:
-            student_id (str, optional): The student id to get the student item for.
+        This allows creating and retrieving submissions for a particular student.
 
         Returns:
             dict: The student item dict.
         """
-        student_id = student_id or get_anonymous_user_id(self.current_user)
-
         return {
-            "student_id": student_id,
+            "student_id": get_anonymous_user_id(self.current_user),
             "course_id": self.block_course_id,
             "item_id": self.block_id,
             "item_type": ITEM_TYPE,
@@ -232,7 +232,9 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin,
         """
         Set the score for the current user.
         """
-        set_score(self.submission_uuid, round(self.raw_score * self.weight), self.weight)
+        set_score(
+            self.submission_uuid, round(self.raw_score * self.weight), self.weight
+        )
 
     def create_submission(self, user_stats: dict) -> None:
         """
@@ -301,11 +303,10 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin,
     @XBlock.json_handler
     def calculate_grade(self, _data: dict, _suffix: str = "") -> dict:
         """
-        Calculate the grade for the student according to the
-        discussion interventions and grading method.
+        Calculate the grade for the student according to the discussion interventions and grading method.
 
         Args:
-            data (dict): Additional data to be used in the calculation.
+            _data (dict): Additional data to be used in the calculation.
             _suffix (str, optional): Suffix for the handler. Defaults to "".
 
         Returns:
@@ -364,7 +365,9 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin,
         text_js = "public/js/translations/{locale_code}/text.js"
         lang_code = locale_code.split("-")[0]
         for code in (translation.to_locale(locale_code), lang_code, "en"):
-            if pkg_resources.resource_exists(loader.module_name, text_js.format(locale_code=code)):
+            if pkg_resources.resource_exists(
+                loader.module_name, text_js.format(locale_code=code)
+            ):
                 return text_js.format(locale_code=code)
         return None
 
