@@ -5,13 +5,13 @@ from enum import Enum
 from discussion_grading.utils import _
 
 
-class GradingMethod(Enum):
+class DiscussionGradingMethod(Enum):
     """
     Enum for discussion grading method.
 
-    - MINIMUM_INTERVENTIONS: Learners are graded based on the minimum number of interventions
-    - AVERAGE_INTERVENTIONS: Learners are graded based on the average number of interventions
+    - MINIMUM_PARTICIPATIONS: Learners are graded based on the minimum number of participations
+    - AVERAGE_PARTICIPATIONS: Learners are graded based on the average number of participations
     """
 
-    MINIMUM_INTERVENTIONS = _("Minimum Interventions")
-    AVERAGE_INTERVENTIONS = _("Average Interventions")
+    MINIMUM_PARTICIPATIONS = _("Minimum Participations")
+    AVERAGE_PARTICIPATIONS = _("Average Participations")

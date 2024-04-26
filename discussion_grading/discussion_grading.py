@@ -16,7 +16,7 @@ from xblock.utils.resources import ResourceLoader
 from xblock.utils.studio_editable import StudioEditableXBlockMixin
 
 from discussion_grading.constants import ITEM_TYPE
-from discussion_grading.enums import GradingMethod
+from discussion_grading.enums import DiscussionGradingMethod
 from discussion_grading.utils import _, get_anonymous_user_id, get_username
 
 try:
@@ -53,30 +53,40 @@ class XBlockDiscussionGrading(
 
     grading_method = String(
         display_name=_("Grading Method"),
-        help=_("Discussion grading method"),
+        help=_(
+            "Defines the grading method to be used. When set to 'Minimum "
+            "Participations', the learner will obtain the maximum score if the "
+            "number of participations is greater than or equal to the number of "
+            "participations required to pass. When set to 'Average Participations', "
+            "the learner will obtain a score equal to the number of participations "
+            "divided by the number of participations required to pass."
+        ),
         values=[
             {"display_name": grading_method.value, "value": grading_method.name}
-            for grading_method in GradingMethod
+            for grading_method in DiscussionGradingMethod
         ],
         scope=Scope.settings,
-        default=GradingMethod.MINIMUM_INTERVENTIONS.name,
+        default=DiscussionGradingMethod.MINIMUM_PARTICIPATIONS.name,
     )
 
     max_attempts = Integer(
         display_name=_("Maximum Attempts"),
         help=_(
-            "Defines the number of times a student can attempt to "
-            "calculate the grade. If the value is not set, infinite "
-            "attempts are allowed."
+            "Defines the number of times a student can attempt to calculate the "
+            "grade. If the value is not set, infinite attempts are allowed."
         ),
         values={"min": 0},
         scope=Scope.settings,
         default=None,
     )
 
-    number_of_interventions = Integer(
-        display_name=_("Number of Interventions"),
-        help=_("Number of interventions"),
+    number_of_participations = Integer(
+        display_name=_("Number of Participations"),
+        help=_(
+            "Defines the number of participations required to pass. If the number "
+            "of learner participations is greater than or equal to this value, the "
+            "student will pass with the maximum score regardless of the grading method."
+        ),
         scope=Scope.settings,
         default=1,
     )
@@ -84,27 +94,27 @@ class XBlockDiscussionGrading(
     weight = Integer(
         display_name=_("Problem Weight"),
         help=_(
-            "Defines the number of points this problem is worth. If "
-            "the value is not set, the problem is worth one point."
+            "Defines the number of points this problem is worth. If the value is "
+            "not set, the problem is worth one point."
         ),
-        default=10,
+        default=1,
         scope=Scope.settings,
     )
 
-    instuctions_text = String(
+    instructions_text = String(
         display_name=_("Instructions Text"),
-        help=_("Instructions to be displayed to the student."),
+        help=_("Defines the instructions text to be displayed to the student."),
         default=_(
-            "Please press the button to calculate your grade according "
-            "to the number of interventions in the discussion forum.",
+            "Please press the button to calculate your grade according to the "
+            "number of participations in the discussion forum.",
         ),
         scope=Scope.settings,
     )
 
     button_text = String(
         display_name=_("Button Text"),
-        help=_("Text to be displayed on the button."),
-        default=_("Calculate Forum Participation"),
+        help=_("Defines the text to be displayed on the button."),
+        default=_("Calculate Discussion Participation"),
         scope=Scope.settings,
     )
 
@@ -132,9 +142,9 @@ class XBlockDiscussionGrading(
         "display_name",
         "grading_method",
         "max_attempts",
-        "number_of_interventions",
+        "number_of_participations",
         "weight",
-        "instuctions_text",
+        "instructions_text",
         "button_text",
     ]
 
@@ -266,24 +276,23 @@ class XBlockDiscussionGrading(
 
     def get_score(self, user_stats: dict) -> int:
         """
-        Get the grade for the current user based on the grading method and number of interventions.
+        Get the grade for the current user based on the grading method and number of participations.
 
         Args:
-            user_stats (dict): The number of interventions for the current user.
+            user_stats (dict): The number of participations for the current user.
 
         Returns:
             int: The grade for the current user.
         """
-        number_of_interventions = sum(user_stats.values())
+        number_of_participations = sum(user_stats.values())
 
-        if number_of_interventions >= self.number_of_interventions:
+        if number_of_participations >= self.number_of_participations:
             return 1
 
-        if self.grading_method == GradingMethod.MINIMUM_INTERVENTIONS.name:
-            return int(number_of_interventions >= self.number_of_interventions)
-        elif self.grading_method == GradingMethod.AVERAGE_INTERVENTIONS.name:
-            # TODO: Add try-except block if number_of_interventions is 0
-            return number_of_interventions / self.number_of_interventions
+        if self.grading_method == DiscussionGradingMethod.MINIMUM_PARTICIPATIONS.name:
+            return int(number_of_participations >= self.number_of_participations)
+        elif self.grading_method == DiscussionGradingMethod.AVERAGE_PARTICIPATIONS.name:
+            return number_of_participations / self.number_of_participations
         return 0
 
     def get_user_stats(self) -> dict:
@@ -326,7 +335,7 @@ class XBlockDiscussionGrading(
         """
         Calculate the grade for the student.
 
-        The grading is calculated according to the discussion interventions and grading method.
+        The grading is calculated according to the discussion participations and grading method.
 
         Args:
             _data (dict): Additional data to be used in the calculation.
