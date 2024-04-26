@@ -20,7 +20,9 @@ from discussion_grading.enums import GradingMethod
 from discussion_grading.utils import _, get_anonymous_user_id, get_username
 
 try:
-    from openedx.core.djangoapps.django_comment_common.comment_client.course import get_course_user_stats
+    from openedx.core.djangoapps.django_comment_common.comment_client.course import (
+        get_course_user_stats,
+    )
 except ImportError:
     get_course_user_stats = None
 
@@ -60,6 +62,18 @@ class XBlockDiscussionGrading(
         default=GradingMethod.MINIMUM_INTERVENTIONS.name,
     )
 
+    max_attempts = Integer(
+        display_name=_("Maximum Attempts"),
+        help=_(
+            "Defines the number of times a student can attempt to "
+            "calculate the grade. If the value is not set, infinite "
+            "attempts are allowed."
+        ),
+        values={"min": 0},
+        scope=Scope.settings,
+        default=None,
+    )
+
     number_of_interventions = Integer(
         display_name=_("Number of Interventions"),
         help=_("Number of interventions"),
@@ -94,6 +108,12 @@ class XBlockDiscussionGrading(
         scope=Scope.settings,
     )
 
+    attempts = Integer(
+        help=_("Number of attempts taken by the student to calculate the grade."),
+        default=0,
+        scope=Scope.user_state,
+    )
+
     raw_score = Float(
         display_name=_("Raw score"),
         help=_("The raw score for the assignment."),
@@ -111,6 +131,7 @@ class XBlockDiscussionGrading(
     editable_fields = [
         "display_name",
         "grading_method",
+        "max_attempts",
         "number_of_interventions",
         "weight",
         "instuctions_text",
@@ -303,7 +324,9 @@ class XBlockDiscussionGrading(
     @XBlock.json_handler
     def calculate_grade(self, _data: dict, _suffix: str = "") -> dict:
         """
-        Calculate the grade for the student according to the discussion interventions and grading method.
+        Calculate the grade for the student.
+
+        The grading is calculated according to the discussion interventions and grading method.
 
         Args:
             _data (dict): Additional data to be used in the calculation.
@@ -312,6 +335,12 @@ class XBlockDiscussionGrading(
         Returns:
             dict: A dictionary containing the handler result.
         """
+        if self.max_attempts and self.attempts >= self.max_attempts:
+            return {
+                "success": False,
+                "message": _("You have reached the maximum number of attempts."),
+            }
+
         user_stats = self.get_user_stats()
 
         if not user_stats:
@@ -327,6 +356,8 @@ class XBlockDiscussionGrading(
             self.emit_completion(1)
 
         self.set_score()
+
+        self.attempts += 1
 
         return {
             "success": True,
