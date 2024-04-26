@@ -15,7 +15,7 @@ EXTRACTED_TEXT := $(EXTRACT_DIR)/text.po
 JS_TARGET := $(PACKAGE_NAME)/public/js/translations
 TRANSLATIONS_DIR := $(PACKAGE_NAME)/translations
 SOURCES=./setup.py ./$(PACKAGE_NAME)
-BLACK_OPTS = --exclude ${SOURCES}
+BLACK_OPTS = --exclude ${SOURCES} --line-length 100
 
 help:
 	@perl -nle'print $& if m{^[\.a-zA-Z_-]+:.*?## .*$$}' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*?## "}; {printf "\033[36m  %-25s\033[0m %s\n", $$1, $$2}'
