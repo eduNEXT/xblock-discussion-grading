@@ -39,8 +39,8 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin,
     display_name = String(
         display_name=_("Display Name"),
         help=_("The display name for this component."),
-        scope=Scope.settings,
         default=_("Discussion Grading"),
+        scope=Scope.settings,
     )
 
     grading_method = String(
@@ -68,8 +68,8 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin,
             "grade. If the value is not set, infinite attempts are allowed."
         ),
         values={"min": 0},
-        scope=Scope.settings,
         default=None,
+        scope=Scope.settings,
     )
 
     number_of_participations = Integer(
@@ -79,8 +79,8 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin,
             "of learner participations is greater than or equal to this value, the "
             "student will pass with the maximum score regardless of the grading method."
         ),
-        scope=Scope.settings,
         default=1,
+        scope=Scope.settings,
     )
 
     weight = Integer(
