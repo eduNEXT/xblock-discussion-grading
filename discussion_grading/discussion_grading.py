@@ -11,14 +11,20 @@ from submissions.api import create_submission, get_score, set_score
 from web_fragments.fragment import Fragment
 from xblock.completable import CompletableXBlockMixin
 from xblock.core import XBlock
-from xblock.fields import Integer, Scope, String
+from xblock.fields import Float, Integer, Scope, String
 from xblock.utils.resources import ResourceLoader
 from xblock.utils.studio_editable import StudioEditableXBlockMixin
 
 from discussion_grading.constants import ITEM_TYPE
-from discussion_grading.edxapp_wrapper.comments import get_course_user_stats
 from discussion_grading.enums import GradingMethod
 from discussion_grading.utils import _, get_anonymous_user_id, get_username
+
+try:
+    from openedx.core.djangoapps.django_comment_common.comment_client.course import (
+        get_course_user_stats,
+    )
+except ImportError:
+    get_course_user_stats = None
 
 log = logging.getLogger(__name__)
 loader = ResourceLoader(__name__)
@@ -80,7 +86,14 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin,
         scope=Scope.settings,
     )
 
-    raw_score = Integer(
+    button_text = String(
+        display_name=_("Button Text"),
+        help=_("Text to be displayed on the button."),
+        default=_("Calculate Forum Participation"),
+        scope=Scope.settings,
+    )
+
+    raw_score = Float(
         display_name=_("Raw score"),
         help=_("The raw score for the assignment."),
         default=None,
@@ -100,61 +113,8 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin,
         "number_of_interventions",
         "weight",
         "instuctions_text",
+        "button_text",
     ]
-
-    @property
-    def block_id(self) -> str:
-        """
-        Return the usage_id of the block.
-        """
-        return str(self.scope_ids.usage_id)
-
-    @property
-    def block_course_id(self) -> str:
-        """
-        Return the course_id of the block.
-        """
-        return str(self.course_id)
-
-    @property
-    def current_user(self):
-        """
-        Get the current user.
-        """
-        return self.runtime.service(self, "user").get_current_user()
-
-    def get_weighted_score(self, student_id=None) -> int | None:
-        """
-        Return weighted score from submissions.
-
-        Args:
-            student_id (_type_, optional): _description_. Defaults to None.
-
-        Returns:
-            int | None: The weighted score.
-        """
-        score = get_score(self.get_student_item_dict(student_id))
-        return score.get("points_earned") if score else None
-
-    def get_student_item_dict(self, student_id=None) -> dict:
-        """
-        Returns dict required by the submissions app for creating and
-        retrieving submissions for a particular student.
-
-        Args:
-            student_id (str, optional): The student id to get the student item for.
-
-        Returns:
-            dict: The student item dict.
-        """
-        student_id = student_id or get_anonymous_user_id(self.current_user)
-
-        return {
-            "student_id": student_id,
-            "course_id": self.block_course_id,
-            "item_id": self.block_id,
-            "item_type": ITEM_TYPE,
-        }
 
     def resource_string(self, path: str) -> str:
         """
@@ -186,6 +146,27 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin,
             template_path, context, i18n_service=self.runtime.service(self, "i18n")
         )
 
+    @property
+    def block_id(self) -> str:
+        """
+        Return the usage_id of the block.
+        """
+        return str(self.scope_ids.usage_id)
+
+    @property
+    def block_course_id(self) -> str:
+        """
+        Return the course_id of the block.
+        """
+        return str(self.course_id)
+
+    @property
+    def current_user(self):
+        """
+        Get the current user.
+        """
+        return self.runtime.service(self, "user").get_current_user()
+
     def student_view(self, _context: dict = None) -> Fragment:
         """
         Create primary view of the XBlockDiscussionGrading, shown to students when viewing courses.
@@ -205,6 +186,7 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin,
 
         context = {
             "block": self,
+            "weighted_score": self.get_weighted_score(),
         }
 
         frag.add_content(self.render_template("static/html/discussion_grading.html", context))
@@ -213,41 +195,42 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin,
         frag.initialize_js("XBlockDiscussionGrading")
         return frag
 
-    @XBlock.json_handler
-    def calculate_grade(self, _data: dict, _suffix: str = "") -> dict:
+    def get_weighted_score(self, student_id=None) -> int | None:
         """
-        Calculate the grade for the student according to the
-        discussion interventions and grading method.
+        Return weighted score from submissions.
 
         Args:
-            data (dict): Additional data to be used in the calculation.
-            _suffix (str, optional): Suffix for the handler. Defaults to "".
+            student_id (_type_, optional): _description_. Defaults to None.
 
         Returns:
-            dict: A dictionary containing the handler result.
+            int | None: The weighted score.
         """
-        user_stats = self.get_user_stats()
-        self.raw_score = self.get_score(user_stats)
+        score = get_score(self.get_student_item_dict(student_id))
+        return score.get("points_earned") if score else 0
 
-        if not self.submission_uuid:
-            self.create_submission(user_stats)
-            self.emit_completion(1)
+    def get_student_item_dict(self, student_id=None) -> dict:
+        """
+        Returns dict required by the submissions app for creating and
+        retrieving submissions for a particular student.
 
-        self.set_score()
+        Args:
+            student_id (str, optional): The student id to get the student item for.
+
+        Returns:
+            dict: The student item dict.
+        """
+        student_id = student_id or get_anonymous_user_id(self.current_user)
 
         return {
-            "success": True,
-            "score": self.raw_score,
-            "weighted_score": self.get_weighted_score(),
-            "user_stats": user_stats,
+            "student_id": student_id,
+            "course_id": self.block_course_id,
+            "item_id": self.block_id,
+            "item_type": ITEM_TYPE,
         }
 
     def set_score(self) -> None:
         """
         Set the score for the current user.
-
-        Args:
-            score (int): The score to set.
         """
         set_score(self.submission_uuid, round(self.raw_score * self.weight), self.weight)
 
@@ -257,39 +240,6 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin,
         """
         submission_data = create_submission(self.get_student_item_dict(), user_stats)
         self.submission_uuid = submission_data.get("uuid")
-
-    def get_user_stats(self) -> dict:
-        """
-        Get the user stats for the current user.
-
-        These stats include the number of:
-            * threads: learner create a post.
-            * responses: learner respond to a post.
-            * replies: learner comment on response.
-
-        Example:
-        >>> self.get_user_stats()
-            {
-                "threads": 1,
-                "responses": 2,
-                "replies": 3,
-            }
-
-        Returns:
-            dict: The user stats for the current user.
-        """
-        # TODO: Add try-except block when forum is not available
-        user_stats = get_course_user_stats(self.block_course_id).get("user_stats")
-
-        for user_stat in user_stats:
-            if user_stat.get("username") == get_username(self.current_user):
-                return {
-                    "threads": user_stat.get("threads"),
-                    "responses": user_stat.get("responses"),
-                    "replies": user_stat.get("replies"),
-                }
-
-        return {}
 
     def get_score(self, user_stats: dict) -> int:
         """
@@ -312,6 +262,74 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin,
             # TODO: Add try-except block if number_of_interventions is 0
             return number_of_interventions / self.number_of_interventions
         return 0
+
+    def get_user_stats(self) -> dict:
+        """
+        Get the user stats for the current user.
+
+        These stats include the number of:
+            * threads: learner create a post.
+            * responses: learner respond to a post.
+            * replies: learner comment on response.
+
+        Example:
+        >>> self.get_user_stats()
+            {
+                "threads": 1,
+                "responses": 2,
+                "replies": 3,
+            }
+
+        Returns:
+            dict: The user stats for the current user.
+        """
+        try:
+            user_stats = get_course_user_stats(self.block_course_id).get("user_stats")
+        except Exception:  # pylint: disable=broad-except
+            return {}
+
+        for user_stat in user_stats:
+            if user_stat.get("username") == get_username(self.current_user):
+                return {
+                    "threads": user_stat.get("threads"),
+                    "responses": user_stat.get("responses"),
+                    "replies": user_stat.get("replies"),
+                }
+
+        return {}
+
+    @XBlock.json_handler
+    def calculate_grade(self, _data: dict, _suffix: str = "") -> dict:
+        """
+        Calculate the grade for the student according to the
+        discussion interventions and grading method.
+
+        Args:
+            data (dict): Additional data to be used in the calculation.
+            _suffix (str, optional): Suffix for the handler. Defaults to "".
+
+        Returns:
+            dict: A dictionary containing the handler result.
+        """
+        user_stats = self.get_user_stats()
+
+        if not user_stats:
+            return {
+                "success": False,
+                "message": _("User stats not found."),
+            }
+
+        self.raw_score = self.get_score(user_stats)
+
+        if not self.submission_uuid:
+            self.create_submission(user_stats)
+            self.emit_completion(1)
+
+        self.set_score()
+
+        return {
+            "success": True,
+        }
 
     @staticmethod
     def workbench_scenarios() -> list[tuple[str, str]]:

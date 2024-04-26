@@ -2,16 +2,27 @@
 function XBlockDiscussionGrading(runtime, element) {
   const calculateGrade = runtime.handlerUrl(element, "calculate_grade");
 
+  // let gettext;
+  // if ("DiscussionGradingI18n" in window || "gettext" in window) {
+  //   gettext = window.DiscussionGradingI18n?.gettext || window.gettext;
+  // }
+
+  // if (typeof gettext == "undefined") {
+  //   // No translations -- used by test environment
+  //   gettext = (string) => string;
+  // }
+
   $(element)
     .find("#calculate-grade")
     .click(function () {
       const data = {};
       $.post(calculateGrade, JSON.stringify(data))
         .done(function (response) {
-          $(element).find("#grade").text(`Your grade is ${response.weighted_score}`);
-          console.log("User Stats", response.user_stats);
-          console.log("Score", response.score);
-          console.log("Weighted score", response.weighted_score);
+          if (response.success) {
+            window.location.reload();
+          } else {
+            alert(response.message);
+          }
         })
         .fail(function () {
           console.log("Error calculating grade");

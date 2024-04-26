@@ -2,6 +2,6 @@
 
 <div class="discussion-grading-block">
     <p>{{ block.instuctions_text }}</p>
-    <button id="calculate-grade">{% trans "Calculate Grade" %}</button>
-    <p id="grade"></p>
+    <button id="calculate-grade">{% trans block.button_text %}</button>
+    <p id="score">{% trans "Your score is: " %}{{ weighted_score }} / {{ block.weight }}</p>
 </div>

@@ -1,5 +1,5 @@
 """
-Student module definitions for Open edX Palm release.
+Comments module definitions for Open edX Quince release.
 """
 
 # pylint: disable=import-error, unused-import
