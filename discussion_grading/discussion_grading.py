@@ -7,7 +7,6 @@ from typing import Optional
 
 import pkg_resources
 from django.utils import translation
-from submissions.api import create_submission, get_score, set_score
 from web_fragments.fragment import Fragment
 from xblock.completable import CompletableXBlockMixin
 from xblock.core import XBlock
@@ -16,15 +15,9 @@ from xblock.utils.resources import ResourceLoader
 from xblock.utils.studio_editable import StudioEditableXBlockMixin
 
 from discussion_grading.constants import ITEM_TYPE
+from discussion_grading.edxapp_wrapper.comments import get_course_user_stats
 from discussion_grading.enums import DiscussionGradingMethod
 from discussion_grading.utils import _, get_anonymous_user_id, get_username
-
-try:
-    from openedx.core.djangoapps.django_comment_common.comment_client.course import (
-        get_course_user_stats,
-    )
-except ImportError:
-    get_course_user_stats = None
 
 log = logging.getLogger(__name__)
 loader = ResourceLoader(__name__)
@@ -32,9 +25,7 @@ loader = ResourceLoader(__name__)
 
 @XBlock.needs("i18n")
 @XBlock.needs("user")
-class XBlockDiscussionGrading(
-    StudioEditableXBlockMixin, CompletableXBlockMixin, XBlock
-):
+class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin, XBlock):
     """
     DiscussionGrading XBlock provides a way to grade discussions in Open edX.
     """
@@ -161,9 +152,7 @@ class XBlockDiscussionGrading(
         data = pkg_resources.resource_string(__name__, path)
         return data.decode("utf8")
 
-    def render_template(
-        self, template_path: str, context: Optional[dict] = None
-    ) -> str:
+    def render_template(self, template_path: str, context: Optional[dict] = None) -> str:
         """
         Render a template with the given context.
 
@@ -216,18 +205,14 @@ class XBlockDiscussionGrading(
 
         # Add i18n js
         if statici18n_js_url := self._get_statici18n_js_url():
-            frag.add_javascript_url(
-                self.runtime.local_resource_url(self, statici18n_js_url)
-            )
+            frag.add_javascript_url(self.runtime.local_resource_url(self, statici18n_js_url))
 
         context = {
             "block": self,
             "weighted_score": self.get_weighted_score(),
         }
 
-        frag.add_content(
-            self.render_template("static/html/discussion_grading.html", context)
-        )
+        frag.add_content(self.render_template("static/html/discussion_grading.html", context))
         frag.add_css(self.resource_string("static/css/discussion_grading.css"))
         frag.add_javascript(self.resource_string("static/js/src/discussion_grading.js"))
         frag.initialize_js("XBlockDiscussionGrading")
@@ -240,6 +225,8 @@ class XBlockDiscussionGrading(
         Returns:
             int | None: The weighted score.
         """
+        from submissions.api import get_score  # pylint: disable=import-outside-toplevel
+
         score = get_score(self.get_student_item_dict())
         return score.get("points_earned") if score else 0
 
@@ -263,14 +250,16 @@ class XBlockDiscussionGrading(
         """
         Set the score for the current user.
         """
-        set_score(
-            self.submission_uuid, round(self.raw_score * self.weight), self.weight
-        )
+        from submissions.api import set_score  # pylint: disable=import-outside-toplevel
+
+        set_score(self.submission_uuid, round(self.raw_score * self.weight), self.weight)
 
     def create_submission(self, user_stats: dict) -> None:
         """
         Get the submission for the current user.
         """
+        from submissions.api import create_submission  # pylint: disable=import-outside-toplevel
+
         submission_data = create_submission(self.get_student_item_dict(), user_stats)
         self.submission_uuid = submission_data.get("uuid")
 
@@ -405,9 +394,7 @@ class XBlockDiscussionGrading(
         text_js = "public/js/translations/{locale_code}/text.js"
         lang_code = locale_code.split("-")[0]
         for code in (translation.to_locale(locale_code), lang_code, "en"):
-            if pkg_resources.resource_exists(
-                loader.module_name, text_js.format(locale_code=code)
-            ):
+            if pkg_resources.resource_exists(loader.module_name, text_js.format(locale_code=code)):
                 return text_js.format(locale_code=code)
         return None
 
