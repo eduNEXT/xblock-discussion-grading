@@ -11,3 +11,7 @@ def plugin_settings(settings):
         "DISCUSSION_GRADING_COMMENTS_BACKEND",
         settings.DISCUSSION_GRADING_COMMENTS_BACKEND,
     )
+    settings.DISCUSSION_GRADING_SUBMISSIONS_BACKEND = getattr(settings, "ENV_TOKENS", {}).get(
+        "DISCUSSION_GRADING_SUBMISSIONS_BACKEND",
+        settings.DISCUSSION_GRADING_SUBMISSIONS_BACKEND,
+    )

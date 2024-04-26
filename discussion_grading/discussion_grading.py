@@ -16,6 +16,7 @@ from xblock.utils.studio_editable import StudioEditableXBlockMixin
 
 from discussion_grading.constants import ITEM_TYPE
 from discussion_grading.edxapp_wrapper.comments import get_course_user_stats
+from discussion_grading.edxapp_wrapper.submissions import create_submission, get_score, set_score
 from discussion_grading.enums import DiscussionGradingMethod
 from discussion_grading.utils import _, get_anonymous_user_id, get_username
 
@@ -225,8 +226,6 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin,
         Returns:
             int | None: The weighted score.
         """
-        from submissions.api import get_score  # pylint: disable=import-outside-toplevel
-
         score = get_score(self.get_student_item_dict())
         return score.get("points_earned") if score else 0
 
@@ -250,16 +249,12 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin,
         """
         Set the score for the current user.
         """
-        from submissions.api import set_score  # pylint: disable=import-outside-toplevel
-
         set_score(self.submission_uuid, round(self.raw_score * self.weight), self.weight)
 
     def create_submission(self, user_stats: dict) -> None:
         """
         Get the submission for the current user.
         """
-        from submissions.api import create_submission  # pylint: disable=import-outside-toplevel
-
         submission_data = create_submission(self.get_student_item_dict(), user_stats)
         self.submission_uuid = submission_data.get("uuid")
 
