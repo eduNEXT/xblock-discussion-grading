@@ -55,3 +55,8 @@ STATICI18N_NAMESPACE = "DiscussionGradingI18n"
 STATICI18N_PACKAGES = ("discussion_grading",)
 STATICI18N_ROOT = "discussion_grading/public/js"
 STATICI18N_OUTPUT_DIR = "translations"
+
+# XBlock backends settings
+DISCUSSION_GRADING_COMMENTS_BACKEND = (
+    "discussion_grading.edxapp_wrapper.backends.comments_q_v1_test"
+)

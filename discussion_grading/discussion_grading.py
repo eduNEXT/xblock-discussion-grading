@@ -7,20 +7,16 @@ from typing import Optional
 
 import pkg_resources
 from django.utils import translation
-
-# TODO: Add backends
-from openedx.core.djangoapps.django_comment_common.comment_client.course import (
-    get_course_user_stats,
-)
 from submissions.api import create_submission, get_score, set_score
 from web_fragments.fragment import Fragment
 from xblock.completable import CompletableXBlockMixin
 from xblock.core import XBlock
-from xblock.fields import Boolean, Integer, Scope, String
+from xblock.fields import Integer, Scope, String
 from xblock.utils.resources import ResourceLoader
 from xblock.utils.studio_editable import StudioEditableXBlockMixin
 
 from discussion_grading.constants import ITEM_TYPE
+from discussion_grading.edxapp_wrapper.comments import get_course_user_stats
 from discussion_grading.enums import GradingMethod
 from discussion_grading.utils import _, get_anonymous_user_id, get_username
 
