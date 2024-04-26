@@ -2,19 +2,35 @@
 
 from __future__ import annotations
 
+import logging
+from typing import Optional
+
 import pkg_resources
 from django.utils import translation
+
+# TODO: Add backends
+from openedx.core.djangoapps.django_comment_common.comment_client.course import (
+    get_course_user_stats,
+)
+from submissions.api import create_submission, get_score, set_score
 from web_fragments.fragment import Fragment
+from xblock.completable import CompletableXBlockMixin
 from xblock.core import XBlock
 from xblock.fields import Boolean, Integer, Scope, String
 from xblock.utils.resources import ResourceLoader
 from xblock.utils.studio_editable import StudioEditableXBlockMixin
 
-from discussion_grading.constants import GradingMethod
-from discussion_grading.utils import _
+from discussion_grading.constants import ITEM_TYPE
+from discussion_grading.enums import GradingMethod
+from discussion_grading.utils import _, get_anonymous_user_id, get_username
+
+log = logging.getLogger(__name__)
+loader = ResourceLoader(__name__)
 
 
-class XBlockDiscussionGrading(StudioEditableXBlockMixin, XBlock):
+@XBlock.needs("i18n")
+@XBlock.needs("user")
+class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin, XBlock):
     """
     DiscussionGrading XBlock provides a way to grade discussions in Open edX.
     """
@@ -58,10 +74,27 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, XBlock):
         scope=Scope.settings,
     )
 
-    graded = Boolean(
-        display_name=_("Graded"),
-        help=_("Whether the student has been graded"),
-        default=False,
+    instuctions_text = String(
+        display_name=_("Instructions Text"),
+        help=_("Instructions to be displayed to the student."),
+        default=_(
+            "Please press the button to calculate your grade according "
+            "to the number of interventions in the discussion forum.",
+        ),
+        scope=Scope.settings,
+    )
+
+    raw_score = Integer(
+        display_name=_("Raw score"),
+        help=_("The raw score for the assignment."),
+        default=None,
+        scope=Scope.user_state,
+    )
+
+    submission_uuid = String(
+        display_name=_("Submission UUID"),
+        help=_("The submission UUID for the assignment."),
+        default=None,
         scope=Scope.user_state,
     )
 
@@ -70,7 +103,62 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, XBlock):
         "grading_method",
         "number_of_interventions",
         "weight",
+        "instuctions_text",
     ]
+
+    @property
+    def block_id(self) -> str:
+        """
+        Return the usage_id of the block.
+        """
+        return str(self.scope_ids.usage_id)
+
+    @property
+    def block_course_id(self) -> str:
+        """
+        Return the course_id of the block.
+        """
+        return str(self.course_id)
+
+    @property
+    def current_user(self):
+        """
+        Get the current user.
+        """
+        return self.runtime.service(self, "user").get_current_user()
+
+    def get_weighted_score(self, student_id=None) -> int | None:
+        """
+        Return weighted score from submissions.
+
+        Args:
+            student_id (_type_, optional): _description_. Defaults to None.
+
+        Returns:
+            int | None: The weighted score.
+        """
+        score = get_score(self.get_student_item_dict(student_id))
+        return score.get("points_earned") if score else None
+
+    def get_student_item_dict(self, student_id=None) -> dict:
+        """
+        Returns dict required by the submissions app for creating and
+        retrieving submissions for a particular student.
+
+        Args:
+            student_id (str, optional): The student id to get the student item for.
+
+        Returns:
+            dict: The student item dict.
+        """
+        student_id = student_id or get_anonymous_user_id(self.current_user)
+
+        return {
+            "student_id": student_id,
+            "course_id": self.block_course_id,
+            "item_id": self.block_id,
+            "item_type": ITEM_TYPE,
+        }
 
     def resource_string(self, path: str) -> str:
         """
@@ -85,35 +173,152 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, XBlock):
         data = pkg_resources.resource_string(__name__, path)
         return data.decode("utf8")
 
-    def student_view(self, context: dict = None) -> Fragment:
+    def render_template(self, template_path: str, context: Optional[dict] = None) -> str:
+        """
+        Render a template with the given context.
+
+        The template is translated according to the user's language.
+
+        Args:
+            template_path (str): The path to the template
+            context(dict, optional): The context to render in the template
+
+        Returns:
+            str: The rendered template
+        """
+        return loader.render_django_template(
+            template_path, context, i18n_service=self.runtime.service(self, "i18n")
+        )
+
+    def student_view(self, _context: dict = None) -> Fragment:
         """
         Create primary view of the XBlockDiscussionGrading, shown to students when viewing courses.
 
         Args:
-            context (dict, optional): A dict containing data to be used in the view. Defaults to None.
+            context (dict, optional):
+                A dict containing data to be used in the view. Defaults to None.
 
         Returns:
             Fragment: The fragment to be displayed.
         """
-        if context:
-            pass  # TO-DO: do something based on the context.
-        html = self.resource_string("static/html/discussion_grading.html")
-        frag = Fragment(html.format(self=self))
-        frag.add_css(self.resource_string("static/css/discussion_grading.css"))
+        frag = Fragment()
 
         # Add i18n js
-        statici18n_js_url = self._get_statici18n_js_url()
-        if statici18n_js_url:
-            frag.add_javascript_url(
-                self.runtime.local_resource_url(self, statici18n_js_url)
-            )
+        if statici18n_js_url := self._get_statici18n_js_url():
+            frag.add_javascript_url(self.runtime.local_resource_url(self, statici18n_js_url))
 
+        context = {
+            "block": self,
+        }
+
+        frag.add_content(self.render_template("static/html/discussion_grading.html", context))
+        frag.add_css(self.resource_string("static/css/discussion_grading.css"))
         frag.add_javascript(self.resource_string("static/js/src/discussion_grading.js"))
         frag.initialize_js("XBlockDiscussionGrading")
         return frag
 
+    @XBlock.json_handler
+    def calculate_grade(self, _data: dict, _suffix: str = "") -> dict:
+        """
+        Calculate the grade for the student according to the
+        discussion interventions and grading method.
+
+        Args:
+            data (dict): Additional data to be used in the calculation.
+            _suffix (str, optional): Suffix for the handler. Defaults to "".
+
+        Returns:
+            dict: A dictionary containing the handler result.
+        """
+        user_stats = self.get_user_stats()
+        self.raw_score = self.get_score(user_stats)
+
+        if not self.submission_uuid:
+            self.create_submission(user_stats)
+            self.emit_completion(1)
+
+        self.set_score()
+
+        return {
+            "success": True,
+            "score": self.raw_score,
+            "weighted_score": self.get_weighted_score(),
+            "user_stats": user_stats,
+        }
+
+    def set_score(self) -> None:
+        """
+        Set the score for the current user.
+
+        Args:
+            score (int): The score to set.
+        """
+        set_score(self.submission_uuid, round(self.raw_score * self.weight), self.weight)
+
+    def create_submission(self, user_stats: dict) -> None:
+        """
+        Get the submission for the current user.
+        """
+        submission_data = create_submission(self.get_student_item_dict(), user_stats)
+        self.submission_uuid = submission_data.get("uuid")
+
+    def get_user_stats(self) -> dict:
+        """
+        Get the user stats for the current user.
+
+        These stats include the number of:
+            * threads: learner create a post.
+            * responses: learner respond to a post.
+            * replies: learner comment on response.
+
+        Example:
+        >>> self.get_user_stats()
+            {
+                "threads": 1,
+                "responses": 2,
+                "replies": 3,
+            }
+
+        Returns:
+            dict: The user stats for the current user.
+        """
+        # TODO: Add try-except block when forum is not available
+        user_stats = get_course_user_stats(self.block_course_id).get("user_stats")
+
+        for user_stat in user_stats:
+            if user_stat.get("username") == get_username(self.current_user):
+                return {
+                    "threads": user_stat.get("threads"),
+                    "responses": user_stat.get("responses"),
+                    "replies": user_stat.get("replies"),
+                }
+
+        return {}
+
+    def get_score(self, user_stats: dict) -> int:
+        """
+        Get the grade for the current user based on the grading method and number of interventions.
+
+        Args:
+            user_stats (dict): The number of interventions for the current user.
+
+        Returns:
+            int: The grade for the current user.
+        """
+        number_of_interventions = sum(user_stats.values())
+
+        if number_of_interventions >= self.number_of_interventions:
+            return 1
+
+        if self.grading_method == GradingMethod.MINIMUM_INTERVENTIONS.name:
+            return int(number_of_interventions >= self.number_of_interventions)
+        elif self.grading_method == GradingMethod.AVERAGE_INTERVENTIONS.name:
+            # TODO: Add try-except block if number_of_interventions is 0
+            return number_of_interventions / self.number_of_interventions
+        return 0
+
     @staticmethod
-    def workbench_scenarios():
+    def workbench_scenarios() -> list[tuple[str, str]]:
         """Create canned scenario for display in the workbench."""
         return [
             (
@@ -144,11 +349,8 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, XBlock):
             return None
         text_js = "public/js/translations/{locale_code}/text.js"
         lang_code = locale_code.split("-")[0]
-        for code in (locale_code, lang_code, "en"):
-            loader = ResourceLoader(__name__)
-            if pkg_resources.resource_exists(
-                loader.module_name, text_js.format(locale_code=code)
-            ):
+        for code in (translation.to_locale(locale_code), lang_code, "en"):
+            if pkg_resources.resource_exists(loader.module_name, text_js.format(locale_code=code)):
                 return text_js.format(locale_code=code)
         return None
 

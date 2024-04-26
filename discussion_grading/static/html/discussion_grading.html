@@ -1,1 +1,7 @@
-<div class="discussion_grading_block"></div>
+{% load i18n %}
+
+<div class="discussion-grading-block">
+    <p>{{ block.instuctions_text }}</p>
+    <button id="calculate-grade">{% trans "Calculate Grade" %}</button>
+    <p id="grade"></p>
+</div>
