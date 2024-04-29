@@ -313,8 +313,9 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin,
                 "message": _("Discussion forum is not enabled."),
             }
 
+        username = get_username(self.current_user)
         for user_stat in user_stats:
-            if user_stat.get("username") == get_username(self.current_user):
+            if user_stat.get("username") == username:
                 return {
                     "sucess": True,
                     "user_stats": {
