@@ -288,31 +288,46 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin,
             * responses: learner respond to a post.
             * replies: learner comment on response.
 
+        If the discussion forum is not enabled or the user
+        stats are not found, a message is returned.
+
         Example:
         >>> self.get_user_stats()
             {
-                "threads": 1,
-                "responses": 2,
-                "replies": 3,
+                "sucess": True,
+                "user_stats": {
+                    "threads": 1,
+                    "responses": 2,
+                    "replies": 3,
+                },
             }
 
         Returns:
-            dict: The user stats for the current user.
+            dict: The user stats for the current user or a message.
         """
         try:
             user_stats = get_course_user_stats(self.block_course_id).get("user_stats")
         except Exception:  # pylint: disable=broad-except
-            return {}
+            return {
+                "sucess": False,
+                "message": _("Discussion forum is not enabled."),
+            }
 
         for user_stat in user_stats:
             if user_stat.get("username") == get_username(self.current_user):
                 return {
-                    "threads": user_stat.get("threads"),
-                    "responses": user_stat.get("responses"),
-                    "replies": user_stat.get("replies"),
+                    "sucess": True,
+                    "user_stats": {
+                        "threads": user_stat.get("threads"),
+                        "responses": user_stat.get("responses"),
+                        "replies": user_stat.get("replies"),
+                    },
                 }
 
-        return {}
+        return {
+            "sucess": False,
+            "message": _("User stats not found."),
+        }
 
     @XBlock.json_handler
     def calculate_grade(self, _data: dict, _suffix: str = "") -> dict:
@@ -336,16 +351,13 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin,
 
         user_stats = self.get_user_stats()
 
-        if not user_stats:
-            return {
-                "success": False,
-                "message": _("User stats not found."),
-            }
+        if not user_stats["sucess"]:
+            return user_stats
 
-        self.raw_score = self.get_score(user_stats)
+        self.raw_score = self.get_score(user_stats["user_stats"])
 
         if not self.submission_uuid:
-            self.create_submission(user_stats)
+            self.create_submission(user_stats["user_stats"])
             self.emit_completion(1)
 
         self.set_score()
