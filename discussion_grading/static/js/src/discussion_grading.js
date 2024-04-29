@@ -21,7 +21,7 @@ function XBlockDiscussionGrading(runtime, element) {
           if (response.success) {
             window.location.reload();
           } else {
-            alert(response.message);
+            $(element).find("#error-message").text(response.message);
           }
         })
         .fail(function () {
