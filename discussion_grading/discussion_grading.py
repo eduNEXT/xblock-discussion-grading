@@ -7,6 +7,7 @@ from typing import Optional
 
 import pkg_resources
 from django.utils import translation
+from requests.exceptions import ConnectionError as RequestsConnectionError
 from web_fragments.fragment import Fragment
 from xblock.completable import CompletableXBlockMixin
 from xblock.core import XBlock
@@ -335,7 +336,7 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin,
 
         try:
             course_user_stats = get_course_user_stats(self.block_course_id).get("user_stats")
-        except Exception:  # pylint: disable=broad-except
+        except RequestsConnectionError:
             return {
                 "success": False,
                 "message": _("Discussion forum is not enabled. Please contact the course team."),
