@@ -49,9 +49,10 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin,
             "Defines the grading method to be used. When set to 'Minimum "
             "Participations', the learner will obtain the maximum score if the "
             "number of participations is greater than or equal to the number of "
-            "participations required to pass. When set to 'Average Participations', "
-            "the learner will obtain a score equal to the number of participations "
-            "divided by the number of participations required to pass."
+            "participations required to pass, 0 otherwise. When set to 'Average "
+            "Participations', the learner will obtain a score equal to the number "
+            "of participations divided by the number of participations required "
+            "to pass."
         ),
         values=[
             {"display_name": grading_method.value, "value": grading_method.name}
