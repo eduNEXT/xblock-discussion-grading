@@ -279,56 +279,39 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin,
 
         return MIN_SCORE
 
-    def get_user_stats(self) -> dict:
+    def get_user_stats(self, course_user_stats: dict) -> dict:
         """
-        Get the user stats for the current user.
+        Get the user stats for the current user. If the user is not found, return an empty dict.
+
+        Args:
+            course_user_stats (dict): The discussion stats for the course.
 
         These stats include the number of:
             * threads: learner create a post.
             * responses: learner respond to a post.
             * replies: learner comment on response.
 
-        If the discussion forum is not enabled or the user
-        stats are not found, a message is returned.
-
         Example:
         >>> self.get_user_stats()
             {
-                "sucess": True,
-                "user_stats": {
-                    "threads": 1,
-                    "responses": 2,
-                    "replies": 3,
-                },
+                "threads": 1,
+                "responses": 2,
+                "replies": 3,
             }
 
         Returns:
-            dict: The user stats for the current user or a message.
+            dict: The user stats for the current user.
         """
-        try:
-            user_stats = get_course_user_stats(self.block_course_id).get("user_stats")
-        except Exception:  # pylint: disable=broad-except
-            return {
-                "sucess": False,
-                "message": _("Discussion forum is not enabled."),
-            }
-
         username = get_username(self.current_user)
-        for user_stat in user_stats:
+        for user_stat in course_user_stats:
             if user_stat.get("username") == username:
                 return {
-                    "sucess": True,
-                    "user_stats": {
-                        "threads": user_stat.get("threads"),
-                        "responses": user_stat.get("responses"),
-                        "replies": user_stat.get("replies"),
-                    },
+                    "threads": user_stat.get("threads"),
+                    "responses": user_stat.get("responses"),
+                    "replies": user_stat.get("replies"),
                 }
 
-        return {
-            "sucess": False,
-            "message": _("User stats not found."),
-        }
+        return {}
 
     @XBlock.json_handler
     def calculate_grade(self, _data: dict, _suffix: str = "") -> dict:
@@ -350,15 +333,25 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin,
                 "message": _("You have reached the maximum number of attempts."),
             }
 
-        user_stats = self.get_user_stats()
+        try:
+            course_user_stats = get_course_user_stats(self.block_course_id).get("user_stats")
+        except Exception:  # pylint: disable=broad-except
+            return {
+                "success": False,
+                "message": _("Discussion forum is not enabled. Please contact the course team."),
+            }
 
-        if not user_stats["sucess"]:
-            return user_stats
+        user_stats = self.get_user_stats(course_user_stats)
+        if not user_stats:
+            return {
+                "success": False,
+                "message": _("Forum stats for use not found. Follow the instructions for the course and try again."),
+            }
 
-        self.raw_score = self.get_score(user_stats["user_stats"])
+        self.raw_score = self.get_score(user_stats)
 
         if not self.submission_uuid:
-            self.create_submission(user_stats["user_stats"])
+            self.create_submission(user_stats)
             self.emit_completion(1)
 
         self.set_score()
