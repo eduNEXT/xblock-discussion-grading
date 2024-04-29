@@ -349,7 +349,7 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin,
         if not user_stats:
             return {
                 "success": False,
-                "message": _("Forum stats for use not found. Follow the instructions for the course and try again."),
+                "message": _("Forum stats for user not found. Follow the instructions for the course and try again."),
             }
 
         self.raw_score = self.get_score(user_stats)
