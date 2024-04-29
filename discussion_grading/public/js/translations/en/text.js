@@ -1,6 +1,6 @@
 
             (function(global){
-                var DiscussionGradingI18n = {
+                var DiscussionGradingI18N = {
                   init: function() {
                     
 
@@ -143,7 +143,7 @@
 
                   }
                 };
-                DiscussionGradingI18n.init();
-                global.DiscussionGradingI18n = DiscussionGradingI18n;
+                DiscussionGradingI18N.init();
+                global.DiscussionGradingI18N = DiscussionGradingI18N;
             }(this));
         

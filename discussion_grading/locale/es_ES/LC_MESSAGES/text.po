@@ -19,19 +19,19 @@ msgstr ""
 
 #: discussion_grading.py:48
 msgid "Display Name"
-msgstr ""
+msgstr "Nombre a Mostrar"
 
 #: discussion_grading.py:49
 msgid "The display name for this component."
-msgstr ""
+msgstr "El nombre a mostrar para este componente."
 
 #: discussion_grading.py:50
 msgid "Discussion Grading"
-msgstr ""
+msgstr "Calificación de Discusión"
 
 #: discussion_grading.py:55
 msgid "Grading Method"
-msgstr ""
+msgstr "Método de Calificación"
 
 #: discussion_grading.py:57
 msgid ""
@@ -42,28 +42,38 @@ msgid ""
 "score equal to the number of participations divided by the number of "
 "participations required to pass."
 msgstr ""
+"Define el método de calificación a utilizar. Cuando se establece en 'Mínimo "
+"de Participaciones', el estudiante obtendrá la puntuación máxima si su número "
+"de participaciones es mayor o igual al número de participaciones requeridas "
+"para aprobar, 0 en caso contrario. Cuando se establece en 'Promedio de "
+"Participaciones', el estudiante obtendrá una puntuación igual a su número de "
+"participaciones dividido por el número de participaciones requeridas para "
+"aprobar."
 
 #: discussion_grading.py:66 enums.py:16
 msgid "Minimum Participations"
-msgstr ""
+msgstr "Mínimo de Participaciones"
 
 #: discussion_grading.py:67 enums.py:17
 msgid "Average Participations"
-msgstr ""
+msgstr "Promedio de Participaciones"
 
 #: discussion_grading.py:74
 msgid "Maximum Attempts"
-msgstr ""
+msgstr "Intentos Máximos"
 
 #: discussion_grading.py:76
 msgid ""
 "Defines the number of times a student can attempt to calculate the grade. If"
 " the value is not set, infinite attempts are allowed."
 msgstr ""
+"Define el número de veces que un estudiante puede intentar calcular la "
+"calificación. Si el valor no está establecido, se permiten intentos "
+"infinitos."
 
 #: discussion_grading.py:85
 msgid "Number of Participations"
-msgstr ""
+msgstr "Número de Participaciones"
 
 #: discussion_grading.py:87
 msgid ""
@@ -71,89 +81,99 @@ msgid ""
 "learner participations is greater than or equal to this value, the student "
 "will pass with the maximum score regardless of the grading method."
 msgstr ""
+"Define el número de participaciones requeridas para aprobar. Si el número de "
+"participaciones del estudiante es mayor o igual a este valor, el estudiante "
+"aprobará con la puntuación máxima independientemente del método de "
+"calificación."
 
 #: discussion_grading.py:96
 msgid "Problem Weight"
-msgstr ""
+msgstr "Peso del Problema"
 
 #: discussion_grading.py:98
 msgid ""
 "Defines the number of points this problem is worth. If the value is not set,"
 " the problem is worth one point."
 msgstr ""
+"Define el número de puntos que vale este problema. Si el valor no está "
+"establecido, el problema vale un punto."
 
 #: discussion_grading.py:106
 msgid "Instructions Text"
-msgstr ""
+msgstr "Texto de Instrucciones"
 
 #: discussion_grading.py:107
 msgid "Defines the instructions text to be displayed to the student."
-msgstr ""
+msgstr "Define el texto de instrucciones que se mostrará al estudiante."
 
 #: discussion_grading.py:109
 msgid ""
 "Please press the button to calculate your grade according to the number of "
 "participations in the discussion forum."
 msgstr ""
+"Por favor, presiona el botón para calcular tu calificación de acuerdo al "
+"número de participaciones en el foro de discusión."
 
 #: discussion_grading.py:116
 msgid "Button Text"
-msgstr ""
+msgstr "Texto del Botón"
 
 #: discussion_grading.py:117
 msgid "Defines the text to be displayed on the button."
-msgstr ""
+msgstr "Define el texto que se mostrará en el botón."
 
 #: discussion_grading.py:118
 msgid "Calculate Discussion Participation"
-msgstr ""
+msgstr "Calcular Participación en la Discusión"
 
 #: discussion_grading.py:123
 msgid "Number of attempts taken by the student to calculate the grade."
-msgstr ""
+msgstr "Número de intentos tomados por el estudiante para calcular la calificación."
 
 #: discussion_grading.py:129
 msgid "Raw score"
-msgstr ""
+msgstr "Puntuación Bruta"
 
 #: discussion_grading.py:130
 msgid "The raw score for the assignment."
-msgstr ""
+msgstr "La puntuación bruta para la tarea."
 
 #: discussion_grading.py:136
 msgid "Submission UUID"
-msgstr ""
+msgstr "UUID de la Entrega"
 
 #: discussion_grading.py:137
 msgid "The submission UUID for the assignment."
-msgstr ""
+msgstr "El UUID de la entrega para la tarea."
 
 #: discussion_grading.py:369
 msgid "You have reached the maximum number of attempts."
-msgstr ""
+msgstr "Has alcanzado el número máximo de intentos."
 
 #: discussion_grading.py:377
 msgid "Discussion forum is not enabled. Please contact the course team."
-msgstr ""
+msgstr "El foro de discusión no está habilitado. Por favor, contacta al equipo del curso."
 
 #: discussion_grading.py:384
 msgid ""
 "Forum stats for user not found. Follow the instructions for the course and "
 "try again."
 msgstr ""
+"No se encontraron estadísticas del foro para el usuario. Sigue las "
+"instrucciones del curso e inténtalo de nuevo."
 
 #: discussion_grading.py:444
 msgid "Dummy"
 msgstr ""
 
-#: public/html/discussion_grading.html:6
+#: static/html/discussion_grading.html:6
 msgid "You have made"
-msgstr ""
+msgstr "Has hecho"
 
-#: public/html/discussion_grading.html:6
+#: static/html/discussion_grading.html:6
 msgid "attempts to calculate the grading."
-msgstr ""
+msgstr "intentos para calcular la calificación."
 
-#: public/html/discussion_grading.html:11
+#: static/html/discussion_grading.html:11
 msgid "Your score is:"
-msgstr ""
+msgstr "Tu puntuación es:"

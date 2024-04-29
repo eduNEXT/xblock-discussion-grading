@@ -103,7 +103,7 @@ extract_translations: symlink_translations ## Extract strings to be translated, 
 
 compile_translations: symlink_translations ## Compile translation files, outputting .mo files for each supported language
 	cd $(PACKAGE_NAME) && i18n_tool generate -v
-	python manage.py compilejsi18n --namespace DiscussionGradingI18n --output $(JS_TARGET)
+	python manage.py compilejsi18n --namespace DiscussionGradingI18N --output $(JS_TARGET)
 
 detect_changed_source_translations:
 	cd $(PACKAGE_NAME) && i18n_tool changed
