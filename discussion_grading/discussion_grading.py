@@ -261,7 +261,7 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin,
         submission_data = create_submission(self.get_student_item_dict(), user_stats)
         self.submission_uuid = submission_data.get("uuid")
 
-    def get_score(self, user_stats: dict) -> int:
+    def get_score(self, user_stats: dict) -> int | float:
         """
         Get the grade for the current user based on the grading method and number of participations.
 
@@ -269,7 +269,7 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin,
             user_stats (dict): The number of participations for the current user.
 
         Returns:
-            int: The grade for the current user.
+            int | float: The grade for the current user.
         """
         number_of_participations = sum(user_stats.values())
 
