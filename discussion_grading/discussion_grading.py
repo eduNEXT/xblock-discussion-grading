@@ -14,7 +14,7 @@ from xblock.fields import Float, Integer, Scope, String
 from xblock.utils.resources import ResourceLoader
 from xblock.utils.studio_editable import StudioEditableXBlockMixin
 
-from discussion_grading.constants import ITEM_TYPE
+from discussion_grading.constants import ITEM_TYPE, MAX_SCORE, MIN_SCORE
 from discussion_grading.edxapp_wrapper.comments import get_course_user_stats
 from discussion_grading.edxapp_wrapper.submissions import create_submission, get_score, set_score
 from discussion_grading.enums import DiscussionGradingMethod
@@ -270,13 +270,14 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin,
         number_of_participations = sum(user_stats.values())
 
         if number_of_participations >= self.number_of_participations:
-            return 1
+            return MAX_SCORE
 
         if self.grading_method == DiscussionGradingMethod.MINIMUM_PARTICIPATIONS.name:
             return int(number_of_participations >= self.number_of_participations)
         elif self.grading_method == DiscussionGradingMethod.AVERAGE_PARTICIPATIONS.name:
             return number_of_participations / self.number_of_participations
-        return 0
+
+        return MIN_SCORE
 
     def get_user_stats(self) -> dict:
         """
