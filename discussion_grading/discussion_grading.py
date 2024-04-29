@@ -15,7 +15,6 @@ from xblock.fields import Float, Integer, Scope, String
 from xblock.utils.resources import ResourceLoader
 from xblock.utils.studio_editable import StudioEditableXBlockMixin
 
-from discussion_grading.constants import ITEM_TYPE, MAX_SCORE, MIN_SCORE
 from discussion_grading.edxapp_wrapper.comments import get_course_user_stats
 from discussion_grading.edxapp_wrapper.submissions import create_submission, get_score, set_score
 from discussion_grading.enums import DiscussionGradingMethod
@@ -23,6 +22,10 @@ from discussion_grading.utils import _, get_anonymous_user_id, get_username
 
 log = logging.getLogger(__name__)
 loader = ResourceLoader(__name__)
+
+ITEM_TYPE = "discussion_grading"
+MAX_SCORE = 1
+MIN_SCORE = 0
 
 
 @XBlock.needs("i18n")

@@ -2,7 +2,8 @@
 Utilities for controlled navigation xblock.
 """
 
-from discussion_grading.constants import ATTR_KEY_ANONYMOUS_USER_ID, ATTR_KEY_USERNAME
+ATTR_KEY_ANONYMOUS_USER_ID = "edx-platform.anonymous_user_id"
+ATTR_KEY_USERNAME = "edx-platform.username"
 
 
 def _(text):
