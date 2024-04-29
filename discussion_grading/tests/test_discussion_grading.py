@@ -45,5 +45,6 @@ class TestXBlockDiscussionGrading(TestCase):
             re.sub("[\n ]", "", fragment.content),
             '<divclass="discussion-grading-block"><p>Instructions</p>'
             '<buttonid="calculate-grade">Button</button>'
-            '<pid="score">Yourscoreis:0/1</p></div>',
+            '<pid="score">Yourscoreis:0/1</p>'
+            '<pid="error-message"></p></div>',
         )
