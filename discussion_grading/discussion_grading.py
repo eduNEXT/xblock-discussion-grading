@@ -166,9 +166,7 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin,
         Returns:
             str: The rendered template
         """
-        return loader.render_django_template(
-            template_path, context, i18n_service=self.runtime.service(self, "i18n")
-        )
+        return loader.render_django_template(template_path, context, i18n_service=self.runtime.service(self, "i18n"))
 
     @property
     def block_id(self) -> str:

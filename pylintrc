@@ -312,7 +312,7 @@ no-docstring-rgx = __.*__$|test_.+|setUp$|setUpClass$|tearDown$|tearDownClass$|M
 docstring-min-length = 5
 
 [FORMAT]
-max-line-length = 100
+max-line-length = 120
 ignore-long-lines = ^\s*(# )?((<?https?://\S+>?)|(\.\. \w+: .*))$
 single-line-if-stmt = no
 max-module-lines = 1000
