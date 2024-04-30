@@ -267,7 +267,7 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin,
         Return weighted score for the current user.
 
         Returns:
-            int | None: The weighted score.
+            int: The weighted score.
         """
         score = get_score(self.get_student_item_dict())
         return score.get("points_earned") if score else 0
@@ -317,7 +317,7 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin,
             return MAX_SCORE
 
         if self.grading_method == DiscussionGradingMethod.MINIMUM_PARTICIPATIONS.name:
-            return int(number_of_participations >= self.number_of_participations)
+            return MIN_SCORE
         elif self.grading_method == DiscussionGradingMethod.AVERAGE_PARTICIPATIONS.name:
             return number_of_participations / self.number_of_participations
 

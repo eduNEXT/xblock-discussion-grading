@@ -6,6 +6,9 @@
 .PHONY: validate_translations pull_translations push_translations install_transifex_clients
 .PHONY: test format coverage quality diff_cover clean validate
 
+# For opening files in a browser. Use like: $(BROWSER)relative/path/to/file.html
+BROWSER := python -m webbrowser file://$(CURDIR)/
+
 REPO_NAME := xblock-discussion-grading
 PACKAGE_NAME := discussion_grading
 EXTRACT_DIR := $(PACKAGE_NAME)/locale/en/LC_MESSAGES
