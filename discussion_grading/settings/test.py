@@ -6,6 +6,7 @@ https://docs.djangoproject.com/en/3.2/topics/settings/
 For the full list of settings and their values, see
 https://docs.djangoproject.com/en/3.2/ref/settings/
 """
+
 import os
 
 BASE_DIR = os.path.dirname(__file__)
@@ -54,3 +55,7 @@ STATICI18N_NAMESPACE = "DiscussionGradingI18n"
 STATICI18N_PACKAGES = ("discussion_grading",)
 STATICI18N_ROOT = "discussion_grading/public/js"
 STATICI18N_OUTPUT_DIR = "translations"
+
+# XBlock backends settings
+DISCUSSION_GRADING_COMMENTS_BACKEND = "discussion_grading.edxapp_wrapper.backends.comments_q_v1_test"
+DISCUSSION_GRADING_SUBMISSIONS_BACKEND = "discussion_grading.edxapp_wrapper.backends.submissions_q_v1"
