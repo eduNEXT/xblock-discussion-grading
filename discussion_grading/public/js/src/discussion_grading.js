@@ -3,8 +3,8 @@ function XBlockDiscussionGrading(runtime, element) {
   const calculateGrade = runtime.handlerUrl(element, "calculate_grade");
 
   let gettext;
-  if ("DiscussionGradingI18n" in window || "gettext" in window) {
-    gettext = window.DiscussionGradingI18n?.gettext || window.gettext;
+  if ("DiscussionGradingI18N" in window || "gettext" in window) {
+    gettext = window.DiscussionGradingI18N?.gettext || window.gettext;
   }
 
   if (typeof gettext == "undefined") {
@@ -21,7 +21,7 @@ function XBlockDiscussionGrading(runtime, element) {
           if (response.success) {
             window.location.reload();
           } else {
-            $(element).find("#error-message").text(response.message);
+            $(element).find("#error-message").text(gettext(response.message));
           }
         })
         .fail(function () {

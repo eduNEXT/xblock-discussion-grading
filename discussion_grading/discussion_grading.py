@@ -15,6 +15,7 @@ from xblock.core import XBlock
 from xblock.fields import Float, Integer, Scope, String
 from xblock.utils.resources import ResourceLoader
 from xblock.utils.studio_editable import StudioEditableXBlockMixin
+from xblock.utils.studio_editable import loader as studio_loader
 
 from discussion_grading.edxapp_wrapper.comments import get_course_user_stats
 from discussion_grading.edxapp_wrapper.submissions import create_submission, get_score, set_score
@@ -205,6 +206,34 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin,
         """
         return self.runtime.service(self, "user").get_current_user()
 
+    def studio_view(self, context):
+        """
+        Render a form for editing this XBlock.
+        """
+        fragment = Fragment()
+        context = {"fields": []}
+
+        # Build a list of all the fields that can be edited:
+        for field_name in self.editable_fields:
+            field = self.fields[field_name]  # pylint: disable=unsubscriptable-object
+            assert field.scope in (Scope.content, Scope.settings), (
+                "Only Scope.content or Scope.settings fields can be used with "
+                "StudioEditableXBlockMixin. Other scopes are for user-specific data and are "
+                "not generally created/configured by content authors in Studio."
+            )
+            field_info = self._make_field_info(field_name, field)
+            if field_info is not None:
+                if field_info["type"] == "string":
+                    field_info["default"] = self.ugettext(field_info.get("default"))
+                    field_info["value"] = self.ugettext(field_info.get("value"))
+                context["fields"].append(field_info)
+
+        fragment.content = studio_loader.render_django_template("templates/studio_edit.html", context)
+        fragment.add_javascript(studio_loader.load_unicode("public/studio_edit.js"))
+        fragment.initialize_js("StudioEditableXBlockMixin")
+
+        return fragment
+
     def student_view(self, _context: dict = None) -> Fragment:
         """
         Create primary view of the XBlockDiscussionGrading, shown to students when viewing courses.
@@ -227,9 +256,9 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin,
             "weighted_score": self.get_weighted_score(),
         }
 
-        frag.add_content(self.render_template("static/html/discussion_grading.html", context))
-        frag.add_css(self.resource_string("static/css/discussion_grading.css"))
-        frag.add_javascript(self.resource_string("static/js/src/discussion_grading.js"))
+        frag.add_content(self.render_template("public/html/discussion_grading.html", context))
+        frag.add_css(self.resource_string("public/css/discussion_grading.css"))
+        frag.add_javascript(self.resource_string("public/js/src/discussion_grading.js"))
         frag.initialize_js("XBlockDiscussionGrading")
         return frag
 

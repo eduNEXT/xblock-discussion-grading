@@ -1,6 +1,6 @@
 
             (function(global){
-                var DiscussionGradingI18n = {
+                var DiscussionGradingI18N = {
                   init: function() {
                     
 
@@ -10,12 +10,55 @@
   const django = globals.django || (globals.django = {});
 
   
-  django.pluralidx = function(count) { return (count == 1) ? 0 : 1; };
+  django.pluralidx = function(n) {
+    const v = (n != 1);
+    if (typeof v === 'boolean') {
+      return v ? 1 : 0;
+    } else {
+      return v;
+    }
+  };
   
 
   /* gettext library */
 
   django.catalog = django.catalog || {};
+  
+  const newcatalog = {
+    "Average Participations": "Promedio de Participaciones",
+    "Button Text": "Texto del Bot\u00f3n",
+    "Calculate Discussion Participation": "Calcular Participaci\u00f3n en la Discusi\u00f3n",
+    "Defines the grading method to be used. When set to 'Minimum Participations', the learner will obtain the maximum score if the number of participations is greater than or equal to the number of participations required to pass, 0 otherwise. When set to 'Average Participations', the learner will obtain a score equal to the number of participations divided by the number of participations required to pass.": "Define el m\u00e9todo de calificaci\u00f3n a utilizar. Cuando se establece en 'M\u00ednimo de Participaciones', el estudiante obtendr\u00e1 la puntuaci\u00f3n m\u00e1xima si su n\u00famero de participaciones es mayor o igual al n\u00famero de participaciones requeridas para aprobar, 0 en caso contrario. Cuando se establece en 'Promedio de Participaciones', el estudiante obtendr\u00e1 una puntuaci\u00f3n igual a su n\u00famero de participaciones dividido por el n\u00famero de participaciones requeridas para aprobar.",
+    "Defines the instructions text to be displayed to the student.": "Define el texto de instrucciones que se mostrar\u00e1 al estudiante.",
+    "Defines the number of participations required to pass. If the number of learner participations is greater than or equal to this value, the student will pass with the maximum score regardless of the grading method.": "Define el n\u00famero de participaciones requeridas para aprobar. Si el n\u00famero de participaciones del estudiante es mayor o igual a este valor, el estudiante aprobar\u00e1 con la puntuaci\u00f3n m\u00e1xima independientemente del m\u00e9todo de calificaci\u00f3n.",
+    "Defines the number of points this problem is worth. If the value is not set, the problem is worth one point.": "Define el n\u00famero de puntos que vale este problema. Si el valor no est\u00e1 establecido, el problema vale un punto.",
+    "Defines the number of times a student can attempt to calculate the grade. If the value is not set, infinite attempts are allowed.": "Define el n\u00famero de veces que un estudiante puede intentar calcular la calificaci\u00f3n. Si el valor no est\u00e1 establecido, se permiten intentos infinitos.",
+    "Defines the text to be displayed on the button.": "Define el texto que se mostrar\u00e1 en el bot\u00f3n.",
+    "Discussion Grading": "Calificaci\u00f3n de Discusi\u00f3n",
+    "Discussion forum is not enabled. Please contact the course team.": "El foro de discusi\u00f3n no est\u00e1 habilitado. Por favor, contacta al equipo del curso.",
+    "Display Name": "Nombre a Mostrar",
+    "Forum stats for user not found. Follow the instructions for the course and try again.": "No se encontraron estad\u00edsticas del foro para el usuario. Sigue las instrucciones del curso e int\u00e9ntalo de nuevo.",
+    "Grading Method": "M\u00e9todo de Calificaci\u00f3n",
+    "Instructions Text": "Texto de Instrucciones",
+    "Maximum Attempts": "Intentos M\u00e1ximos",
+    "Minimum Participations": "Participaciones M\u00ednimas",
+    "Number of Participations": "N\u00famero de Participaciones",
+    "Number of attempts taken by the student to calculate the grade.": "N\u00famero de intentos tomados por el estudiante para calcular la calificaci\u00f3n.",
+    "Please press the button to calculate your grade according to the number of participations in the discussion forum.": "Por favor, presiona el bot\u00f3n para calcular tu calificaci\u00f3n de acuerdo al n\u00famero de participaciones en el foro de discusi\u00f3n.",
+    "Problem Weight": "Peso del Problema",
+    "Raw score": "Puntuaci\u00f3n Bruta",
+    "Submission UUID": "UUID de la Entrega",
+    "The display name for this component.": "El nombre a mostrar para este componente.",
+    "The raw score for the assignment.": "La puntuaci\u00f3n bruta para la tarea.",
+    "The submission UUID for the assignment.": "El UUID de la entrega para la tarea.",
+    "You have made": "Has hecho",
+    "You have reached the maximum number of attempts.": "Has alcanzado el n\u00famero m\u00e1ximo de intentos.",
+    "Your score is:": "Tu puntuaci\u00f3n es:",
+    "attempts to calculate the grading.": "intentos para calcular la calificaci\u00f3n."
+  };
+  for (const key in newcatalog) {
+    django.catalog[key] = newcatalog[key];
+  }
   
 
   if (!django.jsi18n_initialized) {
@@ -128,7 +171,7 @@
 
                   }
                 };
-                DiscussionGradingI18n.init();
-                global.DiscussionGradingI18n = DiscussionGradingI18n;
+                DiscussionGradingI18N.init();
+                global.DiscussionGradingI18N = DiscussionGradingI18N;
             }(this));
         

@@ -42,7 +42,7 @@ STATIC_URL = "/static/"
 # statici18n
 # https://django-statici18n.readthedocs.io/en/latest/settings.html
 
-LOCALE_PATHS = [os.path.join(BASE_DIR, "discussion_grading", "conf", "locale")]
+LOCALE_PATHS = [os.path.join(BASE_DIR, "discussion_grading", "locale")]
 
 LANGUAGES = [
     ("en", "English - Source Language"),
@@ -51,11 +51,11 @@ LANGUAGES = [
 ]
 
 STATICI18N_DOMAIN = "text"
-STATICI18N_NAMESPACE = "DiscussionGradingI18n"
+STATICI18N_NAMESPACE = "DiscussionGradingI18N"
 STATICI18N_PACKAGES = ("discussion_grading",)
 STATICI18N_ROOT = "discussion_grading/public/js"
 STATICI18N_OUTPUT_DIR = "translations"
 
 # XBlock backends settings
 DISCUSSION_GRADING_COMMENTS_BACKEND = "discussion_grading.edxapp_wrapper.backends.comments_q_v1_test"
-DISCUSSION_GRADING_SUBMISSIONS_BACKEND = "discussion_grading.edxapp_wrapper.backends.submissions_q_v1"
+DISCUSSION_GRADING_SUBMISSIONS_BACKEND = "discussion_grading.edxapp_wrapper.backends.submissions_q_v1_test"
