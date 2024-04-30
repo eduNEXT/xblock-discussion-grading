@@ -28,8 +28,7 @@ MAX_SCORE = 1
 MIN_SCORE = 0
 
 
-@XBlock.needs("i18n")
-@XBlock.needs("user")
+@XBlock.needs("i18n", "user")
 class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin, XBlock):
     """
     DiscussionGrading XBlock provides a way to grade discussions in Open edX.
