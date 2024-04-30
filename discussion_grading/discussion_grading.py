@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import logging
+from enum import Enum
 from typing import Optional
 
 import pkg_resources
@@ -17,7 +18,6 @@ from xblock.utils.studio_editable import StudioEditableXBlockMixin
 
 from discussion_grading.edxapp_wrapper.comments import get_course_user_stats
 from discussion_grading.edxapp_wrapper.submissions import create_submission, get_score, set_score
-from discussion_grading.enums import DiscussionGradingMethod
 from discussion_grading.utils import _, get_anonymous_user_id, get_username
 
 log = logging.getLogger(__name__)
@@ -26,6 +26,18 @@ loader = ResourceLoader(__name__)
 ITEM_TYPE = "discussion_grading"
 MAX_SCORE = 1
 MIN_SCORE = 0
+
+
+class DiscussionGradingMethod(Enum):
+    """
+    Enum for discussion grading method.
+
+    - MINIMUM_PARTICIPATIONS: Learners are graded based on the minimum number of participations
+    - AVERAGE_PARTICIPATIONS: Learners are graded based on the average number of participations
+    """
+
+    MINIMUM_PARTICIPATIONS = _("Minimum Participations")
+    AVERAGE_PARTICIPATIONS = _("Average Participations")
 
 
 @XBlock.needs("i18n", "user")
