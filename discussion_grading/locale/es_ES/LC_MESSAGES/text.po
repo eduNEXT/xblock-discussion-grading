@@ -17,52 +17,53 @@ msgstr ""
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: discussion_grading.py:48
+#: discussion_grading.py:40
+msgid "Minimum Participations"
+msgstr "Mínimo de Participaciones"
+
+#: discussion_grading.py:41
+msgid "Weighted Participations"
+msgstr "Participaciones Ponderadas"
+
+#: discussion_grading.py:56
 msgid "Display Name"
 msgstr "Nombre a Mostrar"
 
-#: discussion_grading.py:49
+#: discussion_grading.py:57
 msgid "The display name for this component."
 msgstr "El nombre a mostrar para este componente."
 
-#: discussion_grading.py:50
+#: discussion_grading.py:58
 msgid "Discussion Grading"
 msgstr "Calificación de Discusión"
 
-#: discussion_grading.py:55
+#: discussion_grading.py:63
 msgid "Grading Method"
 msgstr "Método de Calificación"
 
-#: discussion_grading.py:57
+#: discussion_grading.py:65
 msgid ""
 "Defines the grading method to be used. When set to 'Minimum Participations',"
 " the learner will obtain the maximum score if the number of participations "
 "is greater than or equal to the number of participations required to pass, 0"
-" otherwise. When set to 'Average Participations', the learner will obtain a "
-"score equal to the number of participations divided by the number of "
-"participations required to pass."
+" otherwise. When set to 'Weighted Participations', the learner will obtain a"
+" score equal to the number of participations divided by the number of "
+"participations required to pass. The score is rounded to the nearest "
+"integer."
 msgstr ""
 "Define el método de calificación a utilizar. Cuando se establece en 'Mínimo "
 "de Participaciones', el estudiante obtendrá la puntuación máxima si su número "
 "de participaciones es mayor o igual al número de participaciones requeridas "
-"para aprobar, 0 en caso contrario. Cuando se establece en 'Promedio de "
-"Participaciones', el estudiante obtendrá una puntuación igual a su número de "
+"para aprobar, 0 en caso contrario. Cuando se establece en 'Participaciones "
+"Ponderadas', el estudiante obtendrá una puntuación igual a su número de "
 "participaciones dividido por el número de participaciones requeridas para "
-"aprobar."
+"aprobar. La puntuación se redondea al entero más cercano."
 
-#: discussion_grading.py:66 enums.py:16
-msgid "Minimum Participations"
-msgstr "Mínimo de Participaciones"
-
-#: discussion_grading.py:67 enums.py:17
-msgid "Average Participations"
-msgstr "Promedio de Participaciones"
-
-#: discussion_grading.py:74
+#: discussion_grading.py:82
 msgid "Maximum Attempts"
 msgstr "Intentos Máximos"
 
-#: discussion_grading.py:76
+#: discussion_grading.py:84
 msgid ""
 "Defines the number of times a student can attempt to calculate the grade. If"
 " the value is not set, infinite attempts are allowed."
@@ -71,11 +72,11 @@ msgstr ""
 "calificación. Si el valor no está establecido, se permiten intentos "
 "infinitos."
 
-#: discussion_grading.py:85
+#: discussion_grading.py:93
 msgid "Number of Participations"
 msgstr "Número de Participaciones"
 
-#: discussion_grading.py:87
+#: discussion_grading.py:95
 msgid ""
 "Defines the number of participations required to pass. If the number of "
 "learner participations is greater than or equal to this value, the student "
@@ -86,27 +87,27 @@ msgstr ""
 "aprobará con la puntuación máxima independientemente del método de "
 "calificación."
 
-#: discussion_grading.py:96
+#: discussion_grading.py:104
 msgid "Problem Weight"
 msgstr "Peso del Problema"
 
-#: discussion_grading.py:98
-msgid ""
-"Defines the number of points this problem is worth. If the value is not set,"
-" the problem is worth one point."
-msgstr ""
-"Define el número de puntos que vale este problema. Si el valor no está "
-"establecido, el problema vale un punto."
-
 #: discussion_grading.py:106
+msgid ""
+"Defines the number of points this problem is worth. By default, the problem "
+"is worth 10 points."
+msgstr ""
+"Define el número de puntos que vale este problema. Por defecto, el problema "
+"vale 10 puntos."
+
+#: discussion_grading.py:114
 msgid "Instructions Text"
 msgstr "Texto de Instrucciones"
 
-#: discussion_grading.py:107
+#: discussion_grading.py:115
 msgid "Defines the instructions text to be displayed to the student."
 msgstr "Define el texto de instrucciones que se mostrará al estudiante."
 
-#: discussion_grading.py:109
+#: discussion_grading.py:117
 msgid ""
 "Please press the button to calculate your grade according to the number of "
 "participations in the discussion forum."
@@ -114,47 +115,47 @@ msgstr ""
 "Por favor, presiona el botón para calcular tu calificación de acuerdo al "
 "número de participaciones en el foro de discusión."
 
-#: discussion_grading.py:116
+#: discussion_grading.py:124
 msgid "Button Text"
 msgstr "Texto del Botón"
 
-#: discussion_grading.py:117
+#: discussion_grading.py:125
 msgid "Defines the text to be displayed on the button."
 msgstr "Define el texto que se mostrará en el botón."
 
-#: discussion_grading.py:118
+#: discussion_grading.py:126
 msgid "Calculate Discussion Participation"
 msgstr "Calcular Participación en la Discusión"
 
-#: discussion_grading.py:123
+#: discussion_grading.py:131
 msgid "Number of attempts taken by the student to calculate the grade."
 msgstr "Número de intentos tomados por el estudiante para calcular la calificación."
 
-#: discussion_grading.py:129
+#: discussion_grading.py:137
 msgid "Raw score"
 msgstr "Puntuación Bruta"
 
-#: discussion_grading.py:130
+#: discussion_grading.py:138
 msgid "The raw score for the assignment."
 msgstr "La puntuación bruta para la tarea."
 
-#: discussion_grading.py:136
+#: discussion_grading.py:144
 msgid "Submission UUID"
 msgstr "UUID de la Entrega"
 
-#: discussion_grading.py:137
+#: discussion_grading.py:145
 msgid "The submission UUID for the assignment."
 msgstr "El UUID de la entrega para la tarea."
 
-#: discussion_grading.py:369
+#: discussion_grading.py:380
 msgid "You have reached the maximum number of attempts."
 msgstr "Has alcanzado el número máximo de intentos."
 
-#: discussion_grading.py:377
+#: discussion_grading.py:388
 msgid "Discussion forum is not enabled. Please contact the course team."
 msgstr "El foro de discusión no está habilitado. Por favor, contacta al equipo del curso."
 
-#: discussion_grading.py:384
+#: discussion_grading.py:395
 msgid ""
 "Forum stats for user not found. Follow the instructions for the course and "
 "try again."
@@ -162,7 +163,7 @@ msgstr ""
 "No se encontraron estadísticas del foro para el usuario. Sigue las "
 "instrucciones del curso e inténtalo de nuevo."
 
-#: discussion_grading.py:444
+#: discussion_grading.py:454
 msgid "Dummy"
 msgstr ""
 

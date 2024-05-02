@@ -16,10 +16,21 @@ Unreleased
 
 *
 
-0.1.0 – 2024-04-24
+0.2.0 - 2024-05-02
 **********************************************
 
 Added
 =====
 
-* First release on PyPI.
+* Added discussion grading support.
+* Added spanish (es_ES/es_419) translations for the xblock.
+* Added unit tests for the xblock.
+* Added documentation for the xblock.
+
+0.1.0 - 2024-04-24
+**********************************************
+
+Added
+=====
+
+* First release.

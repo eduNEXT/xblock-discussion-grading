@@ -120,9 +120,9 @@ class TestXBlockDiscussionGrading(DiscussionGradingXBlockTestMixin):
 
         self.assertEqual(result, MIN_SCORE)
 
-    def test_get_score_average_participations(self):
+    def test_get_score_weighted_participations(self):
         """Test the `get_score` method."""
-        self.block.grading_method = DiscussionGradingMethod.AVERAGE_PARTICIPATIONS.name
+        self.block.grading_method = DiscussionGradingMethod.WEIGHTED_PARTICIPATIONS.name
 
         # Test when number of participations is greater than or equal to the required number
         user_stats = {"threads": 1, "responses": 1, "replies": 0}

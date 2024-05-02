@@ -25,13 +25,12 @@
   django.catalog = django.catalog || {};
   
   const newcatalog = {
-    "Average Participations": "Promedio de Participaciones",
     "Button Text": "Texto del Bot\u00f3n",
     "Calculate Discussion Participation": "Calcular Participaci\u00f3n en la Discusi\u00f3n",
-    "Defines the grading method to be used. When set to 'Minimum Participations', the learner will obtain the maximum score if the number of participations is greater than or equal to the number of participations required to pass, 0 otherwise. When set to 'Average Participations', the learner will obtain a score equal to the number of participations divided by the number of participations required to pass.": "Define el m\u00e9todo de calificaci\u00f3n a utilizar. Cuando se establece en 'M\u00ednimo de Participaciones', el estudiante obtendr\u00e1 la puntuaci\u00f3n m\u00e1xima si su n\u00famero de participaciones es mayor o igual al n\u00famero de participaciones requeridas para aprobar, 0 en caso contrario. Cuando se establece en 'Promedio de Participaciones', el estudiante obtendr\u00e1 una puntuaci\u00f3n igual a su n\u00famero de participaciones dividido por el n\u00famero de participaciones requeridas para aprobar.",
+    "Defines the grading method to be used. When set to 'Minimum Participations', the learner will obtain the maximum score if the number of participations is greater than or equal to the number of participations required to pass, 0 otherwise. When set to 'Weighted Participations', the learner will obtain a score equal to the number of participations divided by the number of participations required to pass. The score is rounded to the nearest integer.": "Define el m\u00e9todo de calificaci\u00f3n a utilizar. Cuando se establece en 'M\u00ednimo de Participaciones', el estudiante obtendr\u00e1 la puntuaci\u00f3n m\u00e1xima si su n\u00famero de participaciones es mayor o igual al n\u00famero de participaciones requeridas para aprobar, 0 en caso contrario. Cuando se establece en 'Participaciones Ponderadas', el estudiante obtendr\u00e1 una puntuaci\u00f3n igual a su n\u00famero de participaciones dividido por el n\u00famero de participaciones requeridas para aprobar. La puntuaci\u00f3n se redondea al entero m\u00e1s cercano.",
     "Defines the instructions text to be displayed to the student.": "Define el texto de instrucciones que se mostrar\u00e1 al estudiante.",
     "Defines the number of participations required to pass. If the number of learner participations is greater than or equal to this value, the student will pass with the maximum score regardless of the grading method.": "Define el n\u00famero de participaciones requeridas para aprobar. Si el n\u00famero de participaciones del estudiante es mayor o igual a este valor, el estudiante aprobar\u00e1 con la puntuaci\u00f3n m\u00e1xima independientemente del m\u00e9todo de calificaci\u00f3n.",
-    "Defines the number of points this problem is worth. If the value is not set, the problem is worth one point.": "Define el n\u00famero de puntos que vale este problema. Si el valor no est\u00e1 establecido, el problema vale un punto.",
+    "Defines the number of points this problem is worth. By default, the problem is worth 10 points.": "Define el n\u00famero de puntos que vale este problema. Por defecto, el problema vale 10 puntos.",
     "Defines the number of times a student can attempt to calculate the grade. If the value is not set, infinite attempts are allowed.": "Define el n\u00famero de veces que un estudiante puede intentar calcular la calificaci\u00f3n. Si el valor no est\u00e1 establecido, se permiten intentos infinitos.",
     "Defines the text to be displayed on the button.": "Define el texto que se mostrar\u00e1 en el bot\u00f3n.",
     "Discussion Grading": "Calificaci\u00f3n de Discusi\u00f3n",
@@ -41,7 +40,7 @@
     "Grading Method": "M\u00e9todo de Calificaci\u00f3n",
     "Instructions Text": "Texto de Instrucciones",
     "Maximum Attempts": "Intentos M\u00e1ximos",
-    "Minimum Participations": "Participaciones M\u00ednimas",
+    "Minimum Participations": "M\u00ednimo de Participaciones",
     "Number of Participations": "N\u00famero de Participaciones",
     "Number of attempts taken by the student to calculate the grade.": "N\u00famero de intentos tomados por el estudiante para calcular la calificaci\u00f3n.",
     "Please press the button to calculate your grade according to the number of participations in the discussion forum.": "Por favor, presiona el bot\u00f3n para calcular tu calificaci\u00f3n de acuerdo al n\u00famero de participaciones en el foro de discusi\u00f3n.",
@@ -51,6 +50,7 @@
     "The display name for this component.": "El nombre a mostrar para este componente.",
     "The raw score for the assignment.": "La puntuaci\u00f3n bruta para la tarea.",
     "The submission UUID for the assignment.": "El UUID de la entrega para la tarea.",
+    "Weighted Participations": "Participaciones Ponderadas",
     "You have made": "Has hecho",
     "You have reached the maximum number of attempts.": "Has alcanzado el n\u00famero m\u00e1ximo de intentos.",
     "Your score is:": "Tu puntuaci\u00f3n es:",
