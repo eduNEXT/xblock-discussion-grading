@@ -34,11 +34,11 @@ class DiscussionGradingMethod(Enum):
     Enum for discussion grading method.
 
     - MINIMUM_PARTICIPATIONS: Learners are graded based on the minimum number of participations
-    - AVERAGE_PARTICIPATIONS: Learners are graded based on the average number of participations
+    - WEIGHTED_PARTICIPATIONS: Learners are graded based on the weighted number of participations
     """
 
     MINIMUM_PARTICIPATIONS = _("Minimum Participations")
-    AVERAGE_PARTICIPATIONS = _("Average Participations")
+    WEIGHTED_PARTICIPATIONS = _("Weighted Participations")
 
 
 @XBlock.needs("i18n", "user")
@@ -65,10 +65,10 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin,
             "Defines the grading method to be used. When set to 'Minimum "
             "Participations', the learner will obtain the maximum score if the "
             "number of participations is greater than or equal to the number of "
-            "participations required to pass, 0 otherwise. When set to 'Average "
+            "participations required to pass, 0 otherwise. When set to 'Weighted "
             "Participations', the learner will obtain a score equal to the number "
             "of participations divided by the number of participations required "
-            "to pass."
+            "to pass. The score is rounded to the nearest integer."
         ),
         values=[
             {"display_name": grading_method.value, "value": grading_method.name}
@@ -103,10 +103,10 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin,
     weight = Integer(
         display_name=_("Problem Weight"),
         help=_(
-            "Defines the number of points this problem is worth. If the value is "
-            "not set, the problem is worth one point."
+            "Defines the number of points this problem is worth. By default, the "
+            "problem is worth 10 points."
         ),
-        default=1,
+        default=10,
         scope=Scope.settings,
     )
 
@@ -226,6 +226,9 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin,
                 if field_info["type"] == "string":
                     field_info["default"] = self.ugettext(field_info.get("default"))
                     field_info["value"] = self.ugettext(field_info.get("value"))
+                    if "values" in field_info:
+                        for value in field_info["values"]:
+                            value["display_name"] = self.ugettext(value.get("display_name"))
                 context["fields"].append(field_info)
 
         fragment.content = studio_loader.render_django_template("templates/studio_edit.html", context)
@@ -318,7 +321,7 @@ class XBlockDiscussionGrading(StudioEditableXBlockMixin, CompletableXBlockMixin,
 
         if self.grading_method == DiscussionGradingMethod.MINIMUM_PARTICIPATIONS.name:
             return MIN_SCORE
-        elif self.grading_method == DiscussionGradingMethod.AVERAGE_PARTICIPATIONS.name:
+        elif self.grading_method == DiscussionGradingMethod.WEIGHTED_PARTICIPATIONS.name:
             return number_of_participations / self.number_of_participations
 
         return MIN_SCORE
