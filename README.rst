@@ -64,10 +64,10 @@ The **Discussion Grading** component has the following settings:
     if they have the minimum number of participations in the discussion
     forum. If the learner does not have the minimum number of
     participations, the grade is 0
-  - **Average Participations**: The learner will receive a grade based on
-    the average number of participations in the discussion forum. The grade
+  - **Weighted Participations**: The learner will receive a grade based on
+    the weighted number of participations in the discussion forum. The grade
     will be calculated as: (learner_participations / number of
-    participations).
+    participations). The grade is rounded to the nearest integer.
 - **Maximum Attempts**: Allows the course author to set the maximum number of
   attempts that a learner can calculate the grade. If no value is set, the
   learner can calculate the grade as many times as they want.
